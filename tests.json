@@ -1,0 +1,21 @@
+{
+  "tests": [
+    {"id": 1, "name": "hotspot_detection_wifi", "owner": "engine", "status": "passing", "test_class": "HotspotDetectorTests"},
+    {"id": 2, "name": "hotspot_detection_usb", "owner": "engine", "status": "passing", "test_class": "HotspotDetectorTests"},
+    {"id": 3, "name": "byte_counter_accuracy", "owner": "engine", "status": "passing", "test_class": "DataTrackerTests"},
+    {"id": 4, "name": "usage_persistence_across_restarts", "owner": "engine", "status": "passing", "test_class": "UsageStoreTests"},
+    {"id": 5, "name": "alert_threshold_notifications", "owner": "engine", "status": "passing", "test_class": "AlertManagerTests"},
+    {"id": 6, "name": "billing_cycle_reset_monthly", "owner": "engine", "status": "passing", "test_class": "ProfileManagerTests"},
+    {"id": 7, "name": "billing_cycle_reset_daily_weekly", "owner": "engine", "status": "passing", "test_class": "ProfileManagerTests"},
+    {"id": 8, "name": "profile_auto_creation_new_hotspot", "owner": "engine", "status": "passing", "test_class": "ProfileManagerTests"},
+    {"id": 9, "name": "menu_bar_icon_fill_level", "owner": "ui", "status": "passing", "test_class": "DripUITests"},
+    {"id": 10, "name": "popover_displays_usage", "owner": "ui", "status": "passing", "test_class": "DripUITests"},
+    {"id": 11, "name": "settings_profile_crud", "owner": "ui", "status": "passing", "test_class": "DripUITests"},
+    {"id": 12, "name": "session_history_table", "owner": "ui", "status": "passing", "test_class": "DripUITests"},
+    {"id": 13, "name": "light_dark_mode_support", "owner": "ui", "status": "passing", "test_class": "DripUITests"},
+    {"id": 14, "name": "project_builds_clean", "owner": "infra", "status": "passing", "test_class": "ConstantsTests+ModelsTests"},
+    {"id": 15, "name": "models_codable_roundtrip", "owner": "infra", "status": "passing", "test_class": "ModelsTests"},
+    {"id": 16, "name": "launch_at_login_toggle", "owner": "ui", "status": "passing", "test_class": "DripUITests (SettingsView)"},
+    {"id": 17, "name": "end_to_end_connect_track_alert", "owner": "lead", "status": "passing", "test_class": "DripEngineFacadeTests"}
+  ]
+}

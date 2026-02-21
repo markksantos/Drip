@@ -1,0 +1,31 @@
+Session 1 — COMPLETE
+- Status: ALL TASKS DONE
+- Build: PASS (swift build)
+- Tests: 89/89 PASS, 0 failures (swift test)
+- Team: 3 agents completed (project-infra, network-engine, menu-bar-ui)
+
+## project-infra (Task #1) ✓
+- Package.swift — 4 targets (Drip, DripEngine, DripUI, DripApp), macOS 13+
+- Sources/Drip/Models.swift — HotspotProfile, UsageSession, ConnectionState, ResetCycle
+- Sources/Drip/Constants.swift — DripConstants enum with all app constants
+- Drip.entitlements — sandbox, network, wifi-info
+- README.md, init.sh
+- Tests: 16 (ModelsTests + ConstantsTests)
+
+## network-engine (Task #2) ✓
+- HotspotDetector.swift — WiFi/USB/BT detection with protocol DI
+- DataTracker.swift — getifaddrs() byte counting, 2s polling
+- UsageStore.swift — UserDefaults persistence
+- AlertManager.swift — threshold notifications (50/75/90/100%)
+- ProfileManager.swift — multi-profile, auto-create, reset cycles
+- DripEngine.swift — facade wiring all components
+- Tests: 40 (AlertManager 8, DataTracker 4, Facade 3, HotspotDetector 9, ProfileManager 10, UsageStore 6)
+
+## menu-bar-ui (Task #3) ✓
+- main.swift — MenuBarExtra entry point
+- ViewModels.swift — DripViewModel, DisplayFormat, byte formatting
+- MenuBarIcon.swift — water droplet icon (fill level, color coding)
+- PopoverView.swift — usage display with progress bar
+- SettingsView.swift — 4-tab settings window
+- NotConnectedView.swift — disconnected state
+- Tests: 33 (fill level, colors, formatting, profile CRUD, history, display format)
