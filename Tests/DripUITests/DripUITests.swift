@@ -282,5 +282,52 @@ final class DripUITests: XCTestCase {
         // No session means 0 duration
         XCTAssertEqual(vm.formattedSessionDuration, "0m 00s")
     }
+
+    // MARK: - Launch at Login
+
+    func testToggleLaunchAtLoginRegistersItem() {
+        let manager = MockLoginItemManager()
+        let vm = DripViewModel(loginItemManager: manager)
+        XCTAssertFalse(manager.enabled)
+
+        vm.launchAtLogin = true
+        XCTAssertTrue(manager.enabled, "Enabling the toggle should register the login item")
+
+        vm.launchAtLogin = false
+        XCTAssertFalse(manager.enabled, "Disabling the toggle should unregister the login item")
+    }
+
+    func testLaunchAtLoginReflectsSystemRejection() {
+        // A manager that refuses to enable (e.g. unbundled run) should leave the
+        // toggle off rather than showing a state the system didn't accept.
+        let manager = MockLoginItemManager(allowEnable: false)
+        let vm = DripViewModel(loginItemManager: manager)
+
+        vm.launchAtLogin = true
+        XCTAssertFalse(vm.launchAtLogin, "Toggle should snap back when the system rejects registration")
+        XCTAssertFalse(manager.enabled)
+    }
+}
+
+// MARK: - Mocks
+
+final class MockLoginItemManager: LoginItemManaging {
+    private(set) var enabled = false
+    private let allowEnable: Bool
+
+    init(allowEnable: Bool = true) {
+        self.allowEnable = allowEnable
+    }
+
+    var isEnabled: Bool { enabled }
+
+    @discardableResult
+    func setEnabled(_ enabled: Bool) -> Bool {
+        if enabled && !allowEnable {
+            return false
+        }
+        self.enabled = enabled
+        return self.enabled
+    }
 }
 

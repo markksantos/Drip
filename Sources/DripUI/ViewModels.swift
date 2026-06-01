@@ -85,7 +85,23 @@ public final class DripViewModel: ObservableObject {
     @Published public var sessionHistory: [UsageSession]
     @Published public var showUsageInMenuBar: Bool
     @Published public var displayFormat: DisplayFormat
-    @Published public var launchAtLogin: Bool
+    @Published public var launchAtLogin: Bool {
+        didSet {
+            // Avoid acting while we're syncing the toggle from the system state.
+            guard !isSyncingLoginItem, launchAtLogin != oldValue else { return }
+            let applied = loginItemManager.setEnabled(launchAtLogin)
+            if applied != launchAtLogin {
+                // System rejected the change (e.g. unbundled run) — reflect reality.
+                isSyncingLoginItem = true
+                launchAtLogin = applied
+                isSyncingLoginItem = false
+            }
+        }
+    }
+
+    /// Backs the "Launch at Login" toggle. Injectable for tests.
+    public let loginItemManager: LoginItemManaging
+    private var isSyncingLoginItem = false
 
     public init(
         connectionState: ConnectionState = .disconnected,
@@ -95,7 +111,8 @@ public final class DripViewModel: ObservableObject {
         sessionHistory: [UsageSession] = [],
         showUsageInMenuBar: Bool = true,
         displayFormat: DisplayFormat = .gbOnly,
-        launchAtLogin: Bool = false
+        launchAtLogin: Bool = false,
+        loginItemManager: LoginItemManaging = SMAppServiceLoginItemManager()
     ) {
         self.connectionState = connectionState
         self.activeProfile = activeProfile
@@ -104,6 +121,7 @@ public final class DripViewModel: ObservableObject {
         self.sessionHistory = sessionHistory
         self.showUsageInMenuBar = showUsageInMenuBar
         self.displayFormat = displayFormat
+        self.loginItemManager = loginItemManager
         self.launchAtLogin = launchAtLogin
     }
 
@@ -264,6 +282,12 @@ public final class DripViewModel: ObservableObject {
 
         // Load session history from store
         vm.sessionHistory = engine.loadSessions()
+
+        // Reflect the actual system login-item state in the toggle without
+        // triggering a re-registration.
+        vm.isSyncingLoginItem = true
+        vm.launchAtLogin = vm.loginItemManager.isEnabled
+        vm.isSyncingLoginItem = false
 
         // Start the engine
         engine.start()
