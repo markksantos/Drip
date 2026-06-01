@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Development entitlements for locally-run, ad-hoc-signed builds.
+
+  This intentionally OMITS two entitlements that an ad-hoc signature cannot
+  satisfy (AMFI kills the process on launch, exit 137):
+    * com.apple.security.app-sandbox       — needs provisioning to satisfy
+    * com.apple.developer.networking.wifi-info — a restricted entitlement that
+      requires a real Apple Developer signature
+
+  Without wifi-info, Drip still runs and tracks data locally; it just can't read
+  the WiFi SSID for a friendly hotspot name and falls back to "iPhone Hotspot".
+
+  Distribution builds use Drip.entitlements (sandbox + wifi-info) with a real
+  Developer ID / provisioning profile.
+-->
+<plist version="1.0">
+<dict>
+    <key>com.apple.security.network.client</key>
+    <true/>
+</dict>
+</plist>

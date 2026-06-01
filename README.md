@@ -42,14 +42,42 @@ git clone https://github.com/markksantos/Drip.git
 cd Drip
 ./bundle.sh
 cp -r .build/debug/Drip.app /Applications/
+## Build & run
+
+# Build with Swift Package Manager
+swift build
+
+# Run the 94-test suite
+swift test
+
+# Or use the setup script (build + test + open in Xcode)
+./init.sh
 ```
 
 Or build and run directly:
 
-```bash
-swift build
 open .build/debug/DripApp
-```
+### Run it as a menu bar app
+
+`swift run DripApp` does **not** give the executable an app bundle, so the
+menu bar item and notifications won't behave correctly. Build a real `.app`
+bundle instead:
+
+# Release build → signed, runnable .app at .build/release/Drip.app
+open .build/release/Drip.app
+
+`bundle.sh` ad-hoc-signs the bundle so it runs on the build machine with no
+Apple account. Shipping to other Macs needs a Developer ID and notarization —
+see [DISTRIBUTION.md](DISTRIBUTION.md).
+
+### Diagnostics
+
+If hotspot detection misbehaves, `./diagnose.swift` prints the live CoreWLAN
+state, every network interface's byte counters, and whether any interface holds
+an iPhone-hotspot IP (`172.20.10.x`). Useful for confirming which interface
+Drip should be tracking.
+
+## Permissions
 
 ### Permissions
 
@@ -69,7 +97,6 @@ Drip requires **Network** access to read interface byte counters and **WiFi Info
 
 ## 📁 Project Structure
 
-```
 Drip/
 ├── Sources/
 │   ├── Drip/
@@ -101,8 +128,28 @@ Drip/
 ├── bundle.sh                          # Build release .app bundle
 ├── init.sh                            # Build, test, and open
 └── Package.swift
-```
+The project is organized as a Swift Package with four targets:
+
+- **Drip** — shared data models (`HotspotProfile`, `UsageSession`,
+  `ConnectionState`, `ResetCycle`) and constants
+- **DripEngine** — hotspot detection, byte-counting data tracker, alert
+  manager, profile manager, and `UserDefaults` persistence. Every system
+  boundary (CoreWLAN, `getifaddrs`, `UNUserNotificationCenter`) sits behind a
+  protocol for testability.
+- **DripUI** — SwiftUI views: the menu bar droplet that fills from the bottom
+  as data is used, the connected/disconnected popovers, and the settings window
+- **DripApp** — the `MenuBarExtra` entry point wiring the engine to the UI
+
+A marketing landing page (Next.js static export) lives in `landing/`:
+
+cd landing && npm install && npm run build   # static site in landing/out/
+
+Tests live in `Tests/` — engine unit tests, UI/view-model tests, model tests,
+and an end-to-end suite (`Tests/IntegrationTests/EndToEndTests.swift`) that
+drives connect → track → alert → disconnect through the `DripEngine` facade
+with mock protocols.
 
 ## 📄 License
 
 MIT License © 2025 Mark Santos
+[MIT](LICENSE) © 2026 Mark Santos

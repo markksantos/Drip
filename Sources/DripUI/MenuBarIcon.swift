@@ -48,14 +48,57 @@ public struct MenuBarIconView: View {
     @ViewBuilder
     private var dropletIcon: some View {
         if isConnected {
-            Image(systemName: "drop.fill")
-                .symbolRenderingMode(.palette)
-                .foregroundStyle(iconColor)
-                .imageScale(.medium)
+            FillingDropletIcon(ratio: usageRatio, color: iconColor)
+                .frame(width: 14, height: 16)
         } else {
             Image(systemName: "drop")
                 .foregroundStyle(.secondary)
                 .imageScale(.medium)
+        }
+    }
+}
+
+// MARK: - Filling Droplet Icon
+
+/// A water-droplet glyph that fills from the bottom in proportion to data
+/// usage. The empty outline is always drawn; a coloured fill rises to
+/// `ratio` (0...1) and animates smoothly as usage changes — the visual
+/// signature of the app ("Drip").
+public struct FillingDropletIcon: View {
+    public let ratio: Double
+    public let color: Color
+
+    public init(ratio: Double, color: Color) {
+        self.ratio = ratio
+        self.color = color
+    }
+
+    private var clampedRatio: CGFloat {
+        CGFloat(min(max(ratio, 0), 1))
+    }
+
+    public var body: some View {
+        GeometryReader { geo in
+            let height = geo.size.height
+
+            ZStack(alignment: .bottom) {
+                // Faint outline so an empty droplet is still legible.
+                Image(systemName: "drop.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundStyle(color.opacity(0.25))
+
+                // Coloured fill rising from the bottom, masked to the droplet.
+                Image(systemName: "drop.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundStyle(color)
+                    .mask(alignment: .bottom) {
+                        Rectangle()
+                            .frame(height: height * clampedRatio)
+                    }
+            }
+            .animation(.easeInOut(duration: 0.4), value: clampedRatio)
         }
     }
 }
@@ -98,6 +141,13 @@ public struct MenuBarImageRenderer {
 struct MenuBarIconView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 16) {
+            HStack(spacing: 12) {
+                FillingDropletIcon(ratio: 0.0, color: .blue).frame(width: 18, height: 22)
+                FillingDropletIcon(ratio: 0.4, color: .blue).frame(width: 18, height: 22)
+                FillingDropletIcon(ratio: 0.8, color: .yellow).frame(width: 18, height: 22)
+                FillingDropletIcon(ratio: 1.0, color: .red).frame(width: 18, height: 22)
+            }
+            Divider()
             MenuBarIconView(
                 connectionState: .disconnected,
                 usageRatio: 0

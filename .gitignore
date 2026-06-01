@@ -7,9 +7,20 @@
 .env
 .env.local
 .env.*.local
+# Swift / Xcode
+*.xcodeproj/xcuserdata/
+.swiftpm/
+DerivedData/
+
+# Generated app bundle / distribution artifacts
+*.app/
+*.dmg
+
+# Landing (Next.js) — belt-and-suspenders; landing/.gitignore also covers these
+node_modules/
+landing/.next/
+landing/out/
+
 # Environment variables
-.env
-.env.local
-.env.*.local
 .env.production
 .env.development
