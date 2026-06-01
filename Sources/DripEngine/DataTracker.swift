@@ -167,6 +167,12 @@ public final class DataTracker: ObservableObject {
 
     // MARK: - Polling
 
+    /// Test hook: performs a single poll cycle without waiting for the timer.
+    /// Internal so it is only reachable via `@testable import`.
+    func pollForTesting() {
+        poll()
+    }
+
     private func poll() {
         guard let iface = activeInterface,
               let stats = currentStats(for: iface),
