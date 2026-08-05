@@ -24,3 +24,6 @@ landing/out/
 # Environment variables
 .env.production
 .env.development
+
+# Xcode derived data (alt naming)
+DerivedDataCap/
